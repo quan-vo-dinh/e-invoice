@@ -13,16 +13,4 @@ export class InvoiceRepository {
       status: INVOICE_STATUS.CREATED,
     });
   }
-
-  getById(id: string): Promise<Invoice | null> {
-    return this.invoiceModel.findById(id).exec();
-  }
-
-  updatedById(id: string, data: Partial<Invoice>): Promise<Invoice | null> {
-    return this.invoiceModel.findByIdAndUpdate(id, data, { new: true }).exec();
-  }
-
-  deleteById(id: string): Promise<Invoice | null> {
-    return this.invoiceModel.findByIdAndDelete(id).exec();
-  }
 }
