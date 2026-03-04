@@ -5,8 +5,9 @@ import { InvoiceModules } from './modules/invoice/invoice.module';
 import { LoggerMiddleware } from '@common/middlewares/logger.middlewares';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ExceptionInterceptor } from '@common/interceptors/exception.interceptor';
+import { ProductModule } from './modules/product/product.module';
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, load: [() => CONFIGURATION] }), InvoiceModules],
+  imports: [ConfigModule.forRoot({ isGlobal: true, load: [() => CONFIGURATION] }), InvoiceModules, ProductModule],
   controllers: [],
   providers: [{ provide: APP_INTERCEPTOR, useClass: ExceptionInterceptor }],
 })
