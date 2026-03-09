@@ -1,5 +1,40 @@
 # User Creation Flow (BFF -> User Access -> Authorizer -> Keycloak)
 
+## Architecture Overview (Components and Interactions)
+
+```mermaid
+flowchart LR
+    Client[Client / Postman]
+
+    subgraph Platform[Application Platform]
+        BFF[BFF API Gateway\nHTTP /api/v1/users]
+        UA[User-Access Service\nBusiness rules + persistence orchestration]
+        AZ[Authorizer Service\nKeycloak adapter]
+    end
+
+    subgraph DataAndIdP[External Dependencies]
+        KC[(Keycloak\nRealm + Admin API)]
+        MDB[(MongoDB\nusers collection)]
+    end
+
+    Client -->|HTTP JSON| BFF
+    BFF -->|TCP USER.CREATE| UA
+    UA -->|TCP KEYCLOAK.CREATE_USER| AZ
+    AZ -->|OIDC client_credentials| KC
+    AZ -->|Admin REST create user| KC
+    UA -->|exists(email), create(user)| MDB
+    UA -->|returns created status| BFF
+    BFF -->|HTTP response + processId + duration| Client
+```
+
+### Interaction Notes
+
+- `BFF` handles HTTP contract and forwards to internal TCP message flow.
+- `User-Access` owns validation and orchestration: check duplicate email, request Keycloak user creation, then persist user profile.
+- `Authorizer` is the Keycloak integration boundary and hides token/admin API details from other services.
+- `Keycloak` is the source of identity (`userId`), while `MongoDB` is the source of application profile/roles data.
+- Failure propagation is end-to-end: `401/403/500` from Keycloak path is transformed through TCP and returned by BFF.
+
 ```mermaid
 sequenceDiagram
     autonumber
