@@ -6,25 +6,25 @@
 flowchart LR
     Client[Client / Postman]
 
-    subgraph Platform[Application Platform]
-        BFF[BFF API Gateway\nHTTP /api/v1/users]
-        UA[User-Access Service\nBusiness rules + persistence orchestration]
-        AZ[Authorizer Service\nKeycloak adapter]
+    subgraph Platform [Application Platform]
+        BFF["BFF API Gateway\nHTTP /api/v1/users"]
+        UA["User-Access Service\nBusiness rules + persistence orchestration"]
+        AZ["Authorizer Service\nKeycloak adapter"]
     end
 
-    subgraph DataAndIdP[External Dependencies]
+    subgraph DataAndIdP [External Dependencies]
         KC[(Keycloak\nRealm + Admin API)]
         MDB[(MongoDB\nusers collection)]
     end
 
-    Client -->|HTTP JSON| BFF
-    BFF -->|TCP USER.CREATE| UA
-    UA -->|TCP KEYCLOAK.CREATE_USER| AZ
-    AZ -->|OIDC client_credentials| KC
-    AZ -->|Admin REST create user| KC
-    UA -->|exists(email), create(user)| MDB
-    UA -->|returns created status| BFF
-    BFF -->|HTTP response + processId + duration| Client
+    Client -->|"HTTP JSON"| BFF
+    BFF -->|"TCP USER.CREATE"| UA
+    UA -->|"TCP KEYCLOAK.CREATE_USER"| AZ
+    AZ -->|"OIDC client_credentials"| KC
+    AZ -->|"Admin REST create user"| KC
+    UA -->|"exists(email), create(user)"| MDB
+    UA -->|"returns created status"| BFF
+    BFF -->|"HTTP response + processId + duration"| Client
 ```
 
 ### Interaction Notes
