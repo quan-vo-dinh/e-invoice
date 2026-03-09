@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-export const RequestParam = createParamDecorator((param: string, ctx: ExecutionContext) => {
+export const RequestParams = createParamDecorator((param: string, ctx: ExecutionContext) => {
   const request = ctx.switchToRpc().getData();
 
   if (!param) {

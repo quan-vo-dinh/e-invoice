@@ -22,8 +22,17 @@ enum USER {
   DELETE = 'user_access.delete',
 }
 
+enum KEYCLOAK {
+  CREATE_USER = 'keycloak.create_user',
+  GET_USER_BY_ID = 'keycloak.get_user_by_id',
+  GET_USERS = 'keycloak.get_users',
+  UPDATE_USER = 'keycloak.update_user',
+  DELETE_USER = 'keycloak.delete_user',
+}
+
 export const TCP_REQUEST_MESSAGE = {
   INVOICE,
   PRODUCT,
   USER,
+  KEYCLOAK,
 };
