@@ -20,6 +20,7 @@ enum USER {
   GET_LIST = 'user_access.get_list',
   UPDATE = 'user_access.update',
   DELETE = 'user_access.delete',
+  GET_BY_USER_ID = 'user_access.get_by_user_id',
 }
 
 enum KEYCLOAK {
@@ -32,6 +33,7 @@ enum KEYCLOAK {
 
 enum AUTHORIZER {
   LOGIN = 'authorizer.login',
+  VERIFY_USER_TOKEN = 'authorizer.verify_user_token',
 }
 
 export const TCP_REQUEST_MESSAGE = {

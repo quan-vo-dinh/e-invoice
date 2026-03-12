@@ -9,6 +9,7 @@ import { ProductModule } from './modules/product/product.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthorizerModule } from './modules/authorizer/authorizer.module';
 import { UserGuard } from '@common/guards/user.guard';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [() => CONFIGURATION] }),

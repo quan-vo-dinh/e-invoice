@@ -1,4 +1,4 @@
-import { getProcessId } from '@common/utils/string.utils';
+import { getProcessId } from '@common/utils/string.util';
 import { MetadataKey } from '@common/constants/common.constant';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 

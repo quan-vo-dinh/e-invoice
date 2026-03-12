@@ -1,3 +1,26 @@
 import { LoginResponseDto } from '../../gateway/authorizer';
+import { JwtPayload } from 'jsonwebtoken';
+import { PERMISSION } from '@common/constants/enum/role.enum';
+import { User } from '@common/schemas/user.schema';
+
+export class AuthorizedMetadata {
+  userId: string | undefined;
+  user: User | undefined;
+  permissions: PERMISSION[] | undefined;
+  jwt: JwtPayload | undefined;
+
+  constructor(payload?: Partial<AuthorizedMetadata>) {
+    Object.assign(this, payload);
+  }
+}
+
+export class AuthorizeResponse {
+  valid: boolean;
+  metadata = new AuthorizedMetadata();
+
+  constructor(payload: Partial<AuthorizeResponse>) {
+    Object.assign(this, payload);
+  }
+}
 
 export type LoginTcpResponse = LoginResponseDto;

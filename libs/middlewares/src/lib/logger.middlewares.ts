@@ -1,6 +1,6 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { getProcessId } from '@common/utils/string.utils';
+import { getProcessId } from '@common/utils/string.util';
 import { MetadataKey } from '@common/constants/common.constant';
 
 @Injectable()
