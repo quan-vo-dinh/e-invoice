@@ -1,6 +1,6 @@
 export enum ROLE {
   ADMINISTRATOR = 'administrator',
-  ACCOUNTANT = 'accountant',
+  ACCOUNTANT = 'ant',
 }
 
 export enum PERMISSION {

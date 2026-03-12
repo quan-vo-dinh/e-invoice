@@ -9,6 +9,7 @@ import { ProductModule } from './modules/product/product.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthorizerModule } from './modules/authorizer/authorizer.module';
 import { UserGuard } from '@common/guards/user.guard';
+import { PermissionGuard } from '@common/guards/permission.guard';
 
 @Module({
   imports: [
@@ -24,6 +25,10 @@ import { UserGuard } from '@common/guards/user.guard';
     {
       provide: APP_GUARD,
       useClass: UserGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionGuard,
     },
   ],
 })
