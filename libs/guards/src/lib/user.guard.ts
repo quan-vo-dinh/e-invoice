@@ -4,22 +4,28 @@ import { Reflector } from '@nestjs/core';
 import { MetadataKey } from '@common/constants/common.constant';
 import { getAccessToken, setUserData } from '@common/utils/request.util';
 import { getProcessId } from '@common/utils/string.util';
-import { TCP_SERVICES } from '@common/configuration/tcp.config';
-import { TcpClient } from '@common/interfaces/tcp/common/tcp-client.interface';
 import { TCP_REQUEST_MESSAGE } from '@common/constants/enum/tcp-request-message';
 import { AuthorizeResponse } from '@common/interfaces/tcp/authorizer';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { createHash } from 'crypto';
-
+import { GRPC_SERVICES } from '@common/configuration/grpc.config';
+import { ClientGrpc } from '@nestjs/microservices';
+import { AuthorizerService } from '@common/interfaces/grpc/authorizer/index';
 @Injectable()
 export class UserGuard implements CanActivate {
   private readonly logger = new Logger(UserGuard.name);
+  private authorizerService: AuthorizerService;
+
   constructor(
     private readonly reflector: Reflector,
-    @Inject(TCP_SERVICES.AUTHORIZER_SERVICE) private readonly authorizerClient: TcpClient,
+    @Inject(GRPC_SERVICES.AUTHORIZER_SERVICE) private readonly grpcAuthorizerClient: ClientGrpc,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
+
+  onModuleInit() {
+    this.authorizerService = this.grpcAuthorizerClient.getService<AuthorizerService>('AuthorizerService');
+  }
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const authOptions = this.reflector.get<{ secured: boolean }>(MetadataKey.SECURED, context.getHandler());
@@ -47,7 +53,15 @@ export class UserGuard implements CanActivate {
       }
       req[MetadataKey.PROCESSID] = processId;
 
-      const result = await this.verifyToken(token, processId);
+      const response = await firstValueFrom(
+        this.authorizerService.verifyUserToken({
+          processId,
+          token,
+        }),
+      );
+      this.logger.debug({ response });
+      const { data: result } = response;
+
       if (!result?.valid) {
         throw new UnauthorizedException('Token is invalid');
       }
@@ -61,17 +75,6 @@ export class UserGuard implements CanActivate {
       this.logger.error({ error });
       throw new UnauthorizedException('Token is invalid');
     }
-  }
-
-  private async verifyToken(token: string, processId: string): Promise<AuthorizeResponse | undefined> {
-    return firstValueFrom(
-      this.authorizerClient
-        .send<AuthorizeResponse, string>(TCP_REQUEST_MESSAGE.AUTHORIZER.VERIFY_USER_TOKEN, {
-          data: token,
-          processId,
-        })
-        .pipe(map((data) => data.data)),
-    );
   }
 
   generateTokenCacheKey(token: string): string {
